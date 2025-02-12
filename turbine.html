@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Loop Player</title>
+    <style>
+        /* Basic styling for layout */
+        #controls {
+            margin-bottom: 10px;
+        }
+        button {
+            margin-right: 5px;
+            background-color: gray;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        .active {
+            color: black;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <button id="button1" data-color="green" onclick="setLoop(0, 8, 'button1')">Normal</button>
+        <button id="button2" data-color="yellow" onclick="setLoop(9, 25, 'button2')">Compromised</button>
+        <button id="button3" data-color="red" onclick="setLoop(28, 44, 'button3')">Failure</button>
+    </div>
+    <video id="videoPlayer" width="640" height="360" controls>
+        <source src="video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <script>
+        const video = document.getElementById('videoPlayer');
+        let loopStart = 0;
+        let loopEnd = 8;
+        let activeButtonId = null;
+
+        function setLoop(start, end, buttonId) {
+            loopStart = start;
+            loopEnd = end;
+            video.currentTime = loopStart;
+            video.play();
+            updateButtonStyles(buttonId);
+            if (!video.hasEventListener) {
+                video.addEventListener('timeupdate', checkLoop);
+                video.hasEventListener = true;
+            }
+        }
+
+        function checkLoop() {
+            if (video.currentTime >= loopEnd) {
+                video.currentTime = loopStart;
+            }
+        }
+
+        function updateButtonStyles(activeId) {
+            const buttons = document.querySelectorAll('#controls button');
+            buttons.forEach(button => {
+                if (button.id == activeId) {
+                    if (activeId == "button1") {
+                        button.style.backgroundColor = 'green';
+                    } else if (activeId == "button2") {
+                        button.style.backgroundColor = 'orange';
+                    } else if (activeId == "button3") {
+                        button.style.backgroundColor = 'red';
+                    }
+                    
+                } else {
+                    button.classList.remove('active');
+                    button.style.backgroundColor = 'gray';
+                    button.style.color = 'white';
+                }
+            });
+            activeButtonId = activeId;
+        }
+    </script>
+</body>
+</html>
